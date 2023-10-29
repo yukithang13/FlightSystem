@@ -24,6 +24,9 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddRoleManager<RoleManager<IdentityRole>>(); ;
 
 
+builder.Services.AddAutoMapper(typeof(Program));
+builder.Services.AddScoped<IAccountService, AccountService>();
+builder.Services.AddScoped<IFlightService, FlightService>();
 //-------------------------------------------------------------------------------
 
 
@@ -77,6 +80,11 @@ builder.Services.AddAuthentication(options =>
     };
 
 });
+
+
+builder.Services.AddCors(options => options.AddDefaultPolicy(policy =>
+policy.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod())
+);
 
 var app = builder.Build();
 
