@@ -1,10 +1,13 @@
 ﻿using FlightSystem.Model;
-using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 
 namespace FlightSystem.Interface
 {
     public interface IAccountService
     {
-        public Task<IdentityResult> RegisterAsync(RegisterModel model);
+        Task<object?> LoginAsync([FromBody] LoginModel model);
+        Task<object?> RegisterAdminAsync([FromBody] RegisterModel model);
+        Task<object?> RegisterAsync([FromBody] RegisterModel model);
+
     }
 }

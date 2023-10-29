@@ -1,4 +1,5 @@
-﻿using FlightSystem.Interface;
+﻿using FlightSystem.Helpers;
+using FlightSystem.Interface;
 using FlightSystem.Model;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,16 +15,56 @@ namespace FlightSystem.Controllers
             accountServ = serv;
         }
 
-        [HttpPost("Register")]
-        public async Task<IActionResult> SignUp(RegisterModel signup)
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var result = await accountServ.RegisterAsync(signup);
-            if (result.Succeeded)
+            var result = await accountServ.LoginAsync(model);
+            if (result != null)
             {
-                return Ok(result.Succeeded);
+                return Ok(result);
+            }
+            return Unauthorized();
+        }
+
+        [HttpPost("Register")]
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        {
+            var result = await accountServ.RegisterAsync(model);
+
+            if (result is Response response)
+            {
+                if (response.Status == "Success")
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
+                }
             }
 
-            return Unauthorized();
+            // Trong trường hợp result không phải là Response (có thể là một lỗi khác), xử lý tùy theo trường hợp.
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Registration failed." });
+        }
+
+        [HttpPost("Register-admin")]
+        public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
+        {
+            var result = await accountServ.RegisterAdminAsync(model);
+
+            if (result is Response response)
+            {
+                if (response.Status == "Success")
+                {
+                    return Ok(response);
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response);
+                }
+            }
+
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Admin registration failed." });
         }
 
     }
