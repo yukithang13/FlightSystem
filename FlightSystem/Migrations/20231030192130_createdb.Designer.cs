@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlightSystem.Migrations
 {
     [DbContext(typeof(FlightSystemDBContext))]
-    [Migration("20231029064548_Add-flight-Group-Doc")]
-    partial class AddflightGroupDoc
+    [Migration("20231030192130_createdb")]
+    partial class createdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -35,13 +35,15 @@ namespace FlightSystem.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("CreaterID")
-                        .HasColumnType("int");
+                    b.Property<string>("CreaterID")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("FlightId")
-                        .HasColumnType("int");
+                    b.Property<string>("File")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("GroupId")
+                    b.Property<int>("FlightIdDocx")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -70,9 +72,6 @@ namespace FlightSystem.Migrations
                     b.Property<DateTime>("CreatedFlight")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("DocumentId")
-                        .HasColumnType("int");
-
                     b.Property<string>("EndPoint")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -85,6 +84,10 @@ namespace FlightSystem.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("UserFlight")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("FlightId");
 
                     b.ToTable("Flights");
@@ -92,29 +95,46 @@ namespace FlightSystem.Migrations
 
             modelBuilder.Entity("FlightSystem.Data.GroupInfo", b =>
                 {
-                    b.Property<int>("GroupId")
+                    b.Property<int>("GroupInfoId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GroupId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GroupInfoId"), 1L, 1);
 
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("GroupName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Note")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("UserId")
+                    b.Property<int>("DocumentId")
                         .HasColumnType("int");
 
-                    b.HasKey("GroupId");
+                    b.Property<int?>("DocumentInfoDocumentId")
+                        .HasColumnType("int");
 
-                    b.ToTable("GroupInfos");
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GroupInfoId");
+
+                    b.HasIndex("DocumentInfoDocumentId");
+
+                    b.ToTable("GroupInfo");
+                });
+
+            modelBuilder.Entity("FlightSystem.Data.GroupRole", b =>
+                {
+                    b.Property<int>("GroupRoleId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("GroupRoleId"), 1L, 1);
+
+                    b.Property<int>("GroupId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("GroupRoleId");
+
+                    b.ToTable("GroupRoles");
                 });
 
             modelBuilder.Entity("FlightSystem.Data.User", b =>
@@ -151,6 +171,10 @@ namespace FlightSystem.Migrations
                         .HasColumnType("nvarchar(256)");
 
                     b.Property<string>("PasswordHash")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Permission")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("PhoneNumber")
@@ -315,6 +339,13 @@ namespace FlightSystem.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
+            modelBuilder.Entity("FlightSystem.Data.GroupInfo", b =>
+                {
+                    b.HasOne("FlightSystem.Data.DocumentInfo", null)
+                        .WithMany("GroupInfos")
+                        .HasForeignKey("DocumentInfoDocumentId");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -364,6 +395,11 @@ namespace FlightSystem.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("FlightSystem.Data.DocumentInfo", b =>
+                {
+                    b.Navigation("GroupInfos");
                 });
 #pragma warning restore 612, 618
         }

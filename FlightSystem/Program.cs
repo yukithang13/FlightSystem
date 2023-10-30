@@ -24,9 +24,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddRoleManager<RoleManager<IdentityRole>>(); ;
 
 
-builder.Services.AddAutoMapper(typeof(Program));
-builder.Services.AddScoped<IAccountService, AccountService>();
-builder.Services.AddScoped<IFlightService, FlightService>();
+
 //-------------------------------------------------------------------------------
 
 
@@ -37,12 +35,9 @@ builder.Services.AddDbContext<FlightSystemDBContext>(options =>
 
 
 
-//-------------------------------------------------------------------------------
-
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IAccountService, AccountService>();
-
-
+builder.Services.AddScoped<IFlightService, FlightService>();
 
 //-------------------------------------------------------------------------------
 
@@ -51,6 +46,9 @@ builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("RequireUserRole", policy =>
         policy.RequireRole("User"));
+
+    options.AddPolicy("RequireCrewRole", policy =>
+    policy.RequireRole("Crew"));
 
     options.AddPolicy("RequirePilotRole", policy =>
         policy.RequireRole("Pilot"));

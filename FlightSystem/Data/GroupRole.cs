@@ -2,13 +2,16 @@
 
 namespace FlightSystem.Data
 {
-    public class GroupInfo
+    public class GroupRole
     {
         [Key]
-        public int GroupInfoId { get; set; }
-        public int DocumentId { get; set; }
+        public int GroupRoleId { get; set; }
+        [StringLength(450)]
+        public string UserId { get; set; }
+
 
         public int GroupId { get; set; }
+
 
 
     }

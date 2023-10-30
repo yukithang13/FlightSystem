@@ -102,18 +102,16 @@ namespace FlightSystem.Services
                 return new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." };
             }
 
-            if (!await _roleManager.RoleExistsAsync(UserRoles.Admin))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
-            if (!await _roleManager.RoleExistsAsync(UserRoles.User))
-                await _roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            var roles = new List<string> { UserRoles.Admin, UserRoles.User };
 
-            if (await _roleManager.RoleExistsAsync(UserRoles.Admin))
+            foreach (var role in roles)
             {
-                await userManager.AddToRoleAsync(user, UserRoles.Admin);
-            }
-            if (await _roleManager.RoleExistsAsync(UserRoles.User))
-            {
-                await userManager.AddToRoleAsync(user, UserRoles.User);
+                if (!await _roleManager.RoleExistsAsync(role))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole(role));
+                }
+
+                await userManager.AddToRoleAsync(user, role);
             }
 
             return new Response { Status = "Success", Message = "User created successfully!" };

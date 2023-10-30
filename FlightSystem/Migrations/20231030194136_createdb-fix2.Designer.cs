@@ -4,6 +4,7 @@ using FlightSystem.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlightSystem.Migrations
 {
     [DbContext(typeof(FlightSystemDBContext))]
-    partial class FlightSystemDBContextModelSnapshot : ModelSnapshot
+    [Migration("20231030194136_createdb-fix2")]
+    partial class createdbfix2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,14 +37,14 @@ namespace FlightSystem.Migrations
 
                     b.Property<string>("CreaterID")
                         .IsRequired()
-                        .HasMaxLength(450)
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("File")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("FlightIdDocx")
+                        .HasMaxLength(450)
                         .HasColumnType("int");
 
                     b.Property<string>("Title")

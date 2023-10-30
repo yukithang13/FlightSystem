@@ -5,5 +5,6 @@
         public const string Admin = "Admin";
         public const string Pilot = "Pilot";
         public const string User = "User";
+        public const string Crew = "Crew";
     }
 }
