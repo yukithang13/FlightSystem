@@ -1,5 +1,6 @@
 ﻿using FlightSystem.Interface;
 using FlightSystem.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlightSystem.Controllers
@@ -14,6 +15,7 @@ namespace FlightSystem.Controllers
             _flightServ = serv;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<IActionResult> GetAllFlightByAsync()
         {
@@ -65,12 +67,15 @@ namespace FlightSystem.Controllers
                 return StatusCode(500, $"Internal server error: {ex.Message}");
             }
         }
+
+
         [HttpPost]
-        public async Task<IActionResult> AddFlightAsync(FlightModel flightmodel)
+        public async Task<IActionResult> AddFlightAsync([FromBody] FlightModel flightmodel)
         {
-            var newFl = await _flightServ.AddFlightAsync(flightmodel);
-            var fl = await _flightServ.GetFlightByIdAsync(newFl);
-            return fl == null ? NotFound() : Ok(fl);
+            var userId = User.FindFirst("userId")?.Value;
+
+            var newFl = await _flightServ.AddFlightAsync(flightmodel, userId);
+            return Ok(newFl);
         }
 
         [HttpPut("{id}")]

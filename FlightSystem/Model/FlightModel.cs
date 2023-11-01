@@ -10,9 +10,9 @@ namespace FlightSystem.Model
         [Required]
         public string FlightName { get; set; } = string.Empty;
         [Required]
-        public DateTime CreatedFlight { get; set; }
+        public DateTime CreatedFlight { get; set; } = DateTime.Now;
         [Required]
-        public int DocumentId { get; set; }
+        public string User { get; set; }
         [Required]
         public string StartPoint { get; set; } = string.Empty;
         [Required]

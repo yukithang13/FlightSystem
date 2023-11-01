@@ -36,6 +36,7 @@ namespace FlightSystem.Services
             {
                 new Claim(ClaimTypes.Name, user.UserName),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new Claim("userId", user.Id)
             };
 
                 foreach (var userRole in userRoles)
@@ -67,7 +68,8 @@ namespace FlightSystem.Services
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.UserName
+                UserName = model.UserName,
+                Permission = model.Permission
             };
 
             var result = await userManager.CreateAsync(user, model.Password);
@@ -92,7 +94,8 @@ namespace FlightSystem.Services
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.UserName
+                UserName = model.UserName,
+                Permission = model.Permission
             };
 
             var result = await userManager.CreateAsync(user, model.Password);

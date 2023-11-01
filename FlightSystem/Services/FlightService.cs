@@ -18,17 +18,17 @@ namespace FlightSystem.Services
             _mapper = mapper;
         }
         //get all
-        public async Task<List<FlightModel>> GetAllFlightByAsync()
+        public async Task<List<Flight>> GetAllFlightByAsync()
         {
             var fls = await _dbcontext.Flights.ToListAsync();
-            return _mapper.Map<List<FlightModel>>(fls);
+            return _mapper.Map<List<Flight>>(fls);
         }
 
         // get 1 id
-        public async Task<FlightModel> GetFlightByIdAsync(int id)
+        public async Task<Flight> GetFlightByIdAsync(int id)
         {
             var fl = await _dbcontext.Flights.FindAsync(id);
-            return _mapper.Map<FlightModel>(fl);
+            return _mapper.Map<Flight>(fl);
         }
 
         // get Page
@@ -56,17 +56,41 @@ namespace FlightSystem.Services
             return pagedList;
         }
 
-        public async Task<int> AddFlightAsync(FlightModel flightmodel)
+        public async Task<FlightModel> AddFlightAsync(FlightModel flightmodel, string userId)
         {
-            var newFL = _mapper.Map<Flight>(flightmodel);
+            var user = await _dbcontext.Users.FindAsync(userId);
+            if (user == null)
+            {
+                throw new Exception("Invalid userId");
+            }
+
+
+
+            //var newFL = _mapper.Map<Flight>(flightmodel);
+            var newFL = new Flight
+            {
+                UserFlight = userId,
+                FlightName = flightmodel.FlightName,
+                EndPoint = flightmodel.EndPoint,
+                CreatedFlight = flightmodel.CreatedFlight,
+                StartPoint = flightmodel.StartPoint,
+
+            };
+
             _dbcontext.Flights.Add(newFL);
             await _dbcontext.SaveChangesAsync();
 
-            return newFL.FlightId;
+            return flightmodel;
         }
         //update
         public async Task UpdateFlightAsync(int id, FlightModel flightmodel)
         {
+            var existingProduct = await _dbcontext.Flights.FindAsync(flightmodel);
+
+            if (existingProduct == null)
+            {
+                throw new Exception("Product not found");
+            }
             if (id == flightmodel.FlightId)
             {
                 var updateFl = _mapper.Map<Flight>(flightmodel);
