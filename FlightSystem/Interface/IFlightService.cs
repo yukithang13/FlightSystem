@@ -18,5 +18,6 @@ namespace FlightSystem.Interface
         Task UpdateFlightAsync(int id, FlightModel flightmodel);
 
         Task<FlightModel> AddFlightAsync(FlightModel flightmodel, string userId);
+        int GetFlightIdFromFlightName(string flightName);
     }
 }

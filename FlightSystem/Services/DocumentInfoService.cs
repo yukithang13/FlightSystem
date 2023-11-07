@@ -7,48 +7,59 @@ namespace FlightSystem.Services
 {
     public class DocumentInfoService : IDocumentInfoService
     {
-        private readonly FlightSystemDBContext _dbcontext;
-        private readonly IMapper _mapper;
-        private readonly IWebHostEnvironment _hostEnvironment;
 
+        private readonly IWebHostEnvironment hostEnvironment;
+        private FlightSystemDBContext dbcontext;
+        private IMapper mapper;
+
+        public DocumentInfoService(FlightSystemDBContext dbcontext, IMapper mapper)
+        {
+            this.dbcontext = dbcontext;
+            this.mapper = mapper;
+        }
 
         public DocumentInfoService(FlightSystemDBContext dbcontext, IMapper mapper, IWebHostEnvironment hostEnvironment)
         {
-            _dbcontext = dbcontext;
-            _mapper = mapper;
-            _hostEnvironment = hostEnvironment;
+            this.dbcontext = dbcontext;
+            this.mapper = mapper;
+            this.hostEnvironment = hostEnvironment;
         }
 
-        public async Task PostMultiFileAsync(List<DocumentModel> fileData, string userId)
+
+        public async Task PostDocumentAsync(DocumentModel model, string userId, int flightId)
         {
             try
             {
-                var uploadsFolderPath = Path.Combine(_hostEnvironment.WebRootPath, "uploads");
-                if (!Directory.Exists(uploadsFolderPath))
-                    Directory.CreateDirectory(uploadsFolderPath);
-
-                foreach (DocumentModel file in fileData)
+                var file = model.FileData;
+                if (file != null && file.Length > 0)
                 {
-                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.DocumentInfo.FileName);
+                    var uploadsFolderPath = Path.Combine(hostEnvironment.WebRootPath, "files");
+                    if (!Directory.Exists(uploadsFolderPath))
+                        Directory.CreateDirectory(uploadsFolderPath);
+
+                    var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
                     var filePath = Path.Combine(uploadsFolderPath, fileName);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        file.DocumentInfo.CopyTo(stream);
+                        await file.CopyToAsync(stream);
                     }
 
-                    var fileDetails = new DocumentInfo()
+                    var flight = dbcontext.Flights.FirstOrDefault(f => f.FlightName == model.FlightName);
+                    if (flight == null)
                     {
-                        Title = file.DocumentInfo.FileName,
-                        FileType = file.FileType,
-                        CreaterID = userId,
-                        FileData = System.IO.File.ReadAllBytes(filePath), // Đọc dữ liệu từ tệp đã lưu
-                        CreatedAt = DateTime.Now
-                    };
+                        throw new Exception("Flight error");
+                    }
 
-                    var result = _dbcontext.DocumentInfos.Add(fileDetails);
+                    var document = mapper.Map<DocumentInfo>(model);
+                    document.FileData = filePath;
+                    document.CreaterID = userId;
+                    document.FlightIdDocx = flight.FlightId;
+
+                    var result = dbcontext.DocumentInfos.Add(document);
+
+                    await dbcontext.SaveChangesAsync();
                 }
-                await _dbcontext.SaveChangesAsync();
             }
             catch (Exception)
             {

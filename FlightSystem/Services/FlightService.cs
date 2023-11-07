@@ -109,5 +109,19 @@ namespace FlightSystem.Services
                 await _dbcontext.SaveChangesAsync();
             }
         }
+        public int GetFlightIdFromFlightName(string flightName)
+        {
+            var flight = _dbcontext.Flights.FirstOrDefault(f => f.FlightName == flightName);
+
+            if (flight != null)
+            {
+                return flight.FlightId;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
     }
 }

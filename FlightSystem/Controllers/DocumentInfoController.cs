@@ -8,10 +8,10 @@ namespace FlightSystem.Controllers
     [ApiController]
     public class DocumentInfoController : ControllerBase
     {
-        private readonly IDocumentInfoService _docxInfoServ;
-        public DocumentInfoController(IDocumentInfoService serv)
+        private readonly IUnitOfWork _uow;
+        public DocumentInfoController(IUnitOfWork uow)
         {
-            _docxInfoServ = serv;
+            _uow = uow;
         }
         /// <summary>
         /// Multiple File Upload
@@ -21,18 +21,21 @@ namespace FlightSystem.Controllers
 
 
         [HttpPost("PostMultipleFile")]
-        public async Task<ActionResult> PostMultipleFile([FromForm] List<DocumentModel> fileDetails)
+        public async Task<ActionResult> PostMultipleFile([FromForm] DocumentModel model)
         {
             var userId = User.FindFirst("userId")?.Value;
 
-            if (fileDetails == null)
+            if (model == null)
             {
                 return BadRequest();
             }
 
             try
             {
-                await _docxInfoServ.PostMultiFileAsync(fileDetails, userId);
+
+                int flightId = _uow.FlightService.GetFlightIdFromFlightName(model.FlightName);
+
+                await _uow.DocumentInfoService.PostDocumentAsync(model, userId, flightId);
                 return Ok();
             }
             catch (Exception)

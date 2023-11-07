@@ -16,7 +16,7 @@ namespace FlightSystem.Data
         [StringLength(450)]
         public string CreaterID { get; set; }
 
-        public byte[] FileData { get; set; }
+        public string FileData { get; set; }
         public FileType FileType { get; set; }
 
         public DateTime CreatedAt { get; set; }

@@ -9,10 +9,10 @@ namespace FlightSystem.Controllers
     [ApiController]
     public class FlightsController : ControllerBase
     {
-        private readonly IFlightService _flightServ;
-        public FlightsController(IFlightService serv)
+        private readonly IUnitOfWork _uow;
+        public FlightsController(IUnitOfWork uow)
         {
-            _flightServ = serv;
+            _uow = uow;
         }
 
         [Authorize(Roles = "User")]
@@ -21,7 +21,7 @@ namespace FlightSystem.Controllers
         {
             try
             {
-                return Ok(await _flightServ.GetAllFlightByAsync());
+                return Ok(await _uow.FlightService.GetAllFlightByAsync());
             }
             catch (Exception)
             {
@@ -34,7 +34,7 @@ namespace FlightSystem.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFlightByIdAsync(int id)
         {
-            var gv = await _flightServ.GetFlightByIdAsync(id);
+            var gv = await _uow.FlightService.GetFlightByIdAsync(id);
             return gv == null ? NotFound() : Ok(gv);
         }
 
@@ -43,7 +43,7 @@ namespace FlightSystem.Controllers
         {
             try
             {
-                var pagedList = await _flightServ.GetFlightByPageAsync(pageNumber, pageSize);
+                var pagedList = await _uow.FlightService.GetFlightByPageAsync(pageNumber, pageSize);
                 return Ok(pagedList);
             }
             catch (Exception ex)
@@ -59,7 +59,7 @@ namespace FlightSystem.Controllers
         {
             try
             {
-                var pagedList = await _flightServ.FindFlightByPageAsync(pageNumber, pageSize, searchString);
+                var pagedList = await _uow.FlightService.FindFlightByPageAsync(pageNumber, pageSize, searchString);
                 return Ok(pagedList);
             }
             catch (Exception ex)
@@ -74,7 +74,7 @@ namespace FlightSystem.Controllers
         {
             var userId = User.FindFirst("userId")?.Value;
 
-            var newFl = await _flightServ.AddFlightAsync(flightmodel, userId);
+            var newFl = await _uow.FlightService.AddFlightAsync(flightmodel, userId);
             return Ok(newFl);
         }
 
@@ -85,13 +85,13 @@ namespace FlightSystem.Controllers
             {
                 return NotFound();
             }
-            await _flightServ.UpdateFlightAsync(id, flightmodel);
+            await _uow.FlightService.UpdateFlightAsync(id, flightmodel);
             return Ok();
         }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFlightAsync([FromBody] int id)
         {
-            await _flightServ.DeleteFlightAsync(id);
+            await _uow.FlightService.DeleteFlightAsync(id);
             return Ok();
         }
     }

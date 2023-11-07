@@ -1,7 +1,6 @@
 ﻿using FlightSystem.Helpers;
 using FlightSystem.Interface;
 using FlightSystem.Model;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FlightSystem.Controllers
@@ -47,7 +46,8 @@ namespace FlightSystem.Controllers
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Registration failed." });
         }
 
-        [Authorize(Roles = "Admin")]
+        /*        [Authorize(Roles = "Admin")]
+        */
         [HttpPost("Register-admin")]
         public async Task<IActionResult> RegisterAdmin([FromBody] RegisterModel model)
         {
