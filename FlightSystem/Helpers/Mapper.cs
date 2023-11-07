@@ -9,6 +9,7 @@ namespace FlightSystem.Helpers
         public Mapper()
         {
             CreateMap<Flight, FlightModel>().ReverseMap();
+            CreateMap<DocumentInfo, DocumentModel>().ReverseMap();
         }
     }
 }

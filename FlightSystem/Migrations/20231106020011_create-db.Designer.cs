@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace FlightSystem.Migrations
 {
     [DbContext(typeof(FlightSystemDBContext))]
-    [Migration("20231030192543_createdb-fix1")]
-    partial class createdbfix1
+    [Migration("20231106020011_create-db")]
+    partial class createdb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -37,11 +37,15 @@ namespace FlightSystem.Migrations
 
                     b.Property<string>("CreaterID")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("File")
+                    b.Property<byte[]>("FileData")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("int");
 
                     b.Property<int>("FlightIdDocx")
                         .HasColumnType("int");
@@ -86,7 +90,8 @@ namespace FlightSystem.Migrations
 
                     b.Property<string>("UserFlight")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("FlightId");
 
@@ -149,7 +154,8 @@ namespace FlightSystem.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("GroupRoleId");
 

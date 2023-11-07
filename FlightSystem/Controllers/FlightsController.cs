@@ -15,7 +15,7 @@ namespace FlightSystem.Controllers
             _flightServ = serv;
         }
 
-        [Authorize(Roles = "Admin")]
+        [Authorize(Roles = "User")]
         [HttpGet]
         public async Task<IActionResult> GetAllFlightByAsync()
         {

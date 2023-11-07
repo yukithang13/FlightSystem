@@ -16,7 +16,6 @@ namespace FlightSystem.Data
         public virtual DbSet<DocumentInfo> DocumentInfos { get; set; }
         public virtual DbSet<Flight> Flights { get; set; }
         public virtual DbSet<GroupInfo> GroupInfo { get; set; }
-
         public virtual DbSet<Group> Groups { get; set; }
 
 

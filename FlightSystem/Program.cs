@@ -2,10 +2,13 @@
 using FlightSystem.Interface;
 using FlightSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using System.Globalization;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -63,6 +66,7 @@ builder.Services.AddDbContext<FlightSystemDBContext>(options =>
 builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IFlightService, FlightService>();
+builder.Services.AddScoped<IDocumentInfoService, DocumentInfoService>();
 
 //-------------------------------------------------------------------------------
 
@@ -82,6 +86,23 @@ builder.Services.AddAuthorization(options =>
         policy.RequireRole("Admin"));
 
     // Thêm các ủy quyền khác ở đây....
+});
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new RequestCulture("en-US");
+    options.SupportedCultures = new List<CultureInfo> { new CultureInfo("en-US") };
+    options.SupportedUICultures = new List<CultureInfo> { new CultureInfo("en-US") };
+});
+
+
+builder.Services.AddRazorPages()
+    .AddViewLocalization()
+    .AddDataAnnotationsLocalization();
+
+builder.Services.Configure<FormOptions>(x =>
+{
+    x.MultipartBodyLengthLimit = 52428800; // Giới hạn kích thước tệp tải lên (50MB)
 });
 
 builder.Services.AddAuthentication(options =>
@@ -116,6 +137,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+
 }
 
 app.UseCors(builder =>

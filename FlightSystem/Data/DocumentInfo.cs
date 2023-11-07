@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using FlightSystem.Helpers;
+using System.ComponentModel.DataAnnotations;
 
 namespace FlightSystem.Data
 {
@@ -14,11 +15,10 @@ namespace FlightSystem.Data
         public int Type { get; set; }
         [StringLength(450)]
         public string CreaterID { get; set; }
-        public string File { get; set; }
+
+        public byte[] FileData { get; set; }
+        public FileType FileType { get; set; }
+
         public DateTime CreatedAt { get; set; }
-
-
-
-
     }
 }

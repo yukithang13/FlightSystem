@@ -105,7 +105,7 @@ namespace FlightSystem.Services
                 return new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." };
             }
 
-            var roles = new List<string> { UserRoles.Admin, UserRoles.User };
+            var roles = new List<string> { UserRoles.Admin, UserRoles.User, UserRoles.Crew, UserRoles.Pilot };
 
             foreach (var role in roles)
             {

@@ -38,9 +38,12 @@ namespace FlightSystem.Migrations
                         .HasMaxLength(450)
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("File")
+                    b.Property<byte[]>("FileData")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("varbinary(max)");
+
+                    b.Property<int>("FileType")
+                        .HasColumnType("int");
 
                     b.Property<int>("FlightIdDocx")
                         .HasColumnType("int");
