@@ -2,6 +2,7 @@
 using FlightSystem.Data;
 using FlightSystem.Interface;
 using FlightSystem.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace FlightSystem.Services
 {
@@ -24,7 +25,33 @@ namespace FlightSystem.Services
             this.mapper = mapper;
             this.hostEnvironment = hostEnvironment;
         }
+        // find time
+        public async Task<List<DocumentInfo>> SearchDocumentsByDateRangeAsync(DateTime startDate, DateTime endDate)
+        {
+            return await dbcontext.DocumentInfos
+                .Where(d => d.CreatedAt >= startDate && d.CreatedAt <= endDate)
+                .ToListAsync();
+        }
+        // Find name, file, version
+        public async Task<List<DocumentInfo>> SearchDocumentsAsync(string searchTerm)
+        {
+            return await dbcontext.DocumentInfos
+                .Where(d => d.Title.Contains(searchTerm) || d.FileData.Contains(searchTerm) || d.Version.ToString().Contains(searchTerm))
+                .ToListAsync();
+        }
+        //get all
+        public async Task<List<DocumentInfo>> GetAllDocumentByAsync()
+        {
+            var docx = await dbcontext.DocumentInfos.ToListAsync();
+            return mapper.Map<List<DocumentInfo>>(docx);
+        }
 
+        // get 1 id
+        public async Task<DocumentInfo> GetDocumentByIdAsync(int id)
+        {
+            var fl = await dbcontext.DocumentInfos.FindAsync(id);
+            return mapper.Map<DocumentInfo>(fl);
+        }
 
         public async Task PostDocumentAsync(DocumentModel model, string userId, int flightId)
         {
@@ -66,7 +93,33 @@ namespace FlightSystem.Services
                 throw;
             }
         }
+        //update
+        public async Task UpdateDocumentAsync(int id, DocumentModel documentmodel)
+        {
+            var existingDocx = await dbcontext.DocumentInfos.FindAsync(documentmodel);
 
+            if (existingDocx == null)
+            {
+                throw new Exception("Docx not found");
+            }
+            if (id == documentmodel.DocumentInfoId)
+            {
+                var updateDocx = mapper.Map<DocumentInfo>(documentmodel);
+                dbcontext.DocumentInfos.Update(updateDocx);
+                await dbcontext.SaveChangesAsync();
+            }
+        }
+
+        // delete
+        public async Task DeleteDocumentAsync(int id)
+        {
+            var deleteDocx = dbcontext.DocumentInfos.SingleOrDefault(g => g.DocumentId == id);
+            if (deleteDocx != null)
+            {
+                dbcontext.DocumentInfos.Remove(deleteDocx);
+                await dbcontext.SaveChangesAsync();
+            }
+        }
 
     }
 }
