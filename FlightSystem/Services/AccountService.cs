@@ -136,5 +136,30 @@ namespace FlightSystem.Services
 
             return token;
         }
+
+        public async Task<bool> EditUserRoleAsync(string userId, string newRole)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            var currentRoles = await userManager.GetRolesAsync(user);
+
+            var role = await _roleManager.FindByNameAsync(newRole);
+            if (role == null)
+            {
+                role = new IdentityRole(newRole);
+                await _roleManager.CreateAsync(role);
+            }
+
+            await userManager.RemoveFromRolesAsync(user, currentRoles.ToArray());
+
+            await userManager.AddToRoleAsync(user, newRole);
+
+            return true;
+        }
     }
 }

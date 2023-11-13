@@ -68,6 +68,20 @@ namespace FlightSystem.Controllers
 
             return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "Admin registration failed." });
         }
+        [Authorize(Roles = "Admin")]
 
+        [HttpPost("edit-role")]
+        public async Task<IActionResult> EditUserRole([FromBody] EditUserRoleModel request)
+        {
+            var result = await accountServ.EditUserRoleAsync(request.UserId, request.NewRole);
+
+            if (result)
+            {
+                return Ok("User role updated successfully.");
+            }
+
+            return BadRequest("Failed to update user role.");
+        }
     }
+
 }
