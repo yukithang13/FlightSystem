@@ -10,6 +10,6 @@
 - SQL Server
 
 ## 👉 Database
-![Screenshot 1](https://i.ibb.co/wJRQ4jL/datapng.png)
+![Screenshot 1]()
 
 ## ✨ <> Thanks for visiting </> ✨
