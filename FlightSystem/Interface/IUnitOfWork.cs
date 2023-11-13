@@ -9,6 +9,9 @@
 
         IGroupService GroupService { get; }
 
+        IGroupRoleService GroupRoleService { get; }
+
+        IGroupInfoService GroupInfoService { get; }
 
 
 

@@ -24,6 +24,10 @@ namespace FlightSystem.Helpers
 
         public IGroupService GroupService => new GroupService(_dbcontext, _mapper);
 
+        public IGroupRoleService GroupRoleService => new GroupRoleService(_dbcontext, _mapper);
+
+
+        public IGroupInfoService GroupInfoService => new GroupInfoService(_dbcontext, _mapper);
 
 
 

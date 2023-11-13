@@ -69,6 +69,10 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IFlightService, FlightService>();
 builder.Services.AddScoped<IDocumentInfoService, DocumentInfoService>();
 builder.Services.AddScoped<IGroupService, GroupService>();
+builder.Services.AddScoped<IGroupRoleService, GroupRoleService>();
+builder.Services.AddScoped<IGroupInfoService, GroupInfoService>();
+
+
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 
