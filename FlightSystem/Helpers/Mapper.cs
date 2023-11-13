@@ -10,6 +10,9 @@ namespace FlightSystem.Helpers
         {
             CreateMap<Flight, FlightModel>().ReverseMap();
             CreateMap<DocumentInfo, DocumentModel>().ReverseMap();
+            CreateMap<Group, GroupModel>().ReverseMap();
+
+
         }
     }
 }

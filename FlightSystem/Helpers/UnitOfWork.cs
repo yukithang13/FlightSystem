@@ -17,12 +17,15 @@ namespace FlightSystem.Helpers
             _dbcontext = dbcontext;
             _hostEnvironment = hostEnvironment;
         }
+
         public IFlightService FlightService => new FlightService(_dbcontext, _mapper);
 
-        public IDocumentInfoService DocumentInfoService => new DocumentInfoService(_dbcontext, _mapper);
+        public IDocumentInfoService DocumentInfoService => new DocumentInfoService(_dbcontext, _mapper, _hostEnvironment);
+
+        public IGroupService GroupService => new GroupService(_dbcontext, _mapper);
 
 
-        public IAccountService AccountService => throw new NotImplementedException();
+
 
 
 

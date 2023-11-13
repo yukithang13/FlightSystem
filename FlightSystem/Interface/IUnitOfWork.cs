@@ -3,10 +3,12 @@
     public interface IUnitOfWork
     {
 
-        IAccountService AccountService { get; }
         IFlightService FlightService { get; }
 
         IDocumentInfoService DocumentInfoService { get; }
+
+        IGroupService GroupService { get; }
+
 
 
 

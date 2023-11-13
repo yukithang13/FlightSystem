@@ -1,5 +1,6 @@
 ﻿using FlightSystem.Interface;
 using FlightSystem.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Globalization;
 
@@ -15,9 +16,34 @@ namespace FlightSystem.Controllers
             _uow = uow;
         }
 
+        [Authorize(Roles = "Admin,Pilot")]
 
+        [HttpGet("get-all")]
+        public async Task<IActionResult> GetAllDocumentByAsync()
+        {
+            try
+            {
+                return Ok(await _uow.DocumentInfoService.GetAllDocumentByAsync());
+            }
+            catch (Exception)
+            {
 
-        [HttpPost("add-document")]
+                return BadRequest();
+            }
+        }
+
+        [Authorize(Roles = "Admin,Pilot,User,Crew")]
+
+        [HttpGet("get-id/{id}")]
+        public async Task<IActionResult> GetDocumentByIdAsync(int id)
+        {
+            var Docx = await _uow.DocumentInfoService.GetDocumentByIdAsync(id);
+            return Docx == null ? NotFound() : Ok(Docx);
+        }
+
+        [Authorize(Roles = "Admin,Pilot")]
+
+        [HttpPost("add")]
         public async Task<ActionResult> AddDocumentAsync([FromForm] DocumentModel model)
         {
             var userId = User.FindFirst("userId")?.Value;
@@ -41,7 +67,9 @@ namespace FlightSystem.Controllers
             }
         }
 
-        [HttpPut("update-document/{id}")]
+        [Authorize(Roles = "Admin,Pilot")]
+
+        [HttpPut("update/{id}")]
         public async Task<IActionResult> UpdateDocumentAsync(int id, [FromBody] DocumentModel documentmodel)
         {
             if (id != documentmodel.DocumentInfoId)
@@ -52,14 +80,18 @@ namespace FlightSystem.Controllers
             return Ok();
         }
 
-        [HttpDelete("delete-document/{id}")]
+        [Authorize(Roles = "Admin")]
+
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> DeleteDocumentAsync([FromBody] int id)
         {
             await _uow.DocumentInfoService.DeleteDocumentAsync(id);
             return Ok();
         }
 
-        [HttpGet("docx-search-date-range")]
+        [Authorize(Roles = "Admin,Pilot")]
+
+        [HttpGet("search-date-range")]
         public async Task<ActionResult> SearchDocumentsByDateRange([FromQuery] string startDate, [FromQuery] string endDate)
         {
             try
@@ -84,7 +116,9 @@ namespace FlightSystem.Controllers
             }
         }
 
-        [HttpGet("docx-search-term")]
+        [Authorize(Roles = "Admin,Pilot,Crew,User")]
+
+        [HttpGet("search-term")]
         public async Task<ActionResult> SearchDocuments([FromQuery] string searchTerm)
         {
             try
@@ -98,5 +132,19 @@ namespace FlightSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin,Pilot,User,Crew")]
+
+        [HttpGet("quickSort")]
+        public IActionResult GetAllDocumentInfosQuickSort()
+        {
+            try
+            {
+                return Ok(_uow.DocumentInfoService.GetAllDocumentInfosQuickSort());
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
     }
 }

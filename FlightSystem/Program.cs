@@ -1,4 +1,5 @@
 ﻿using FlightSystem.Data;
+using FlightSystem.Helpers;
 using FlightSystem.Interface;
 using FlightSystem.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -20,9 +21,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    // Cấu hình tài liệu API ở đây.
+    // Config API.
 
-    // Thêm JWT Bearer Token vào Swagger
+    // Add JWT Bearer Token  Swagger
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme",
@@ -67,6 +68,10 @@ builder.Services.AddAutoMapper(typeof(Program));
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IFlightService, FlightService>();
 builder.Services.AddScoped<IDocumentInfoService, DocumentInfoService>();
+builder.Services.AddScoped<IGroupService, GroupService>();
+
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 
 //-------------------------------------------------------------------------------
 
@@ -102,7 +107,7 @@ builder.Services.AddRazorPages()
 
 builder.Services.Configure<FormOptions>(x =>
 {
-    x.MultipartBodyLengthLimit = 52428800; // Giới hạn kích thước tệp tải lên (50MB)
+    x.MultipartBodyLengthLimit = 52428800; // (50MB)
 });
 
 builder.Services.AddAuthentication(options =>

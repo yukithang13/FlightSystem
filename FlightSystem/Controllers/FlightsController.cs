@@ -30,6 +30,7 @@ namespace FlightSystem.Controllers
             }
         }
 
+        [Authorize(Roles = "User")]
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetFlightByIdAsync(int id)
@@ -37,6 +38,8 @@ namespace FlightSystem.Controllers
             var gv = await _uow.FlightService.GetFlightByIdAsync(id);
             return gv == null ? NotFound() : Ok(gv);
         }
+
+        [Authorize(Roles = "User")]
 
         [HttpGet("page-flight")]
         public async Task<IActionResult> GetFlightByPage([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10) // default 1-10 size
@@ -53,6 +56,7 @@ namespace FlightSystem.Controllers
         }
 
 
+        [Authorize(Roles = "Admin,Pilot,User,Crew")]
 
         [HttpGet("search-flight")]
         public async Task<IActionResult> FindFlightByPageAsync([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 10, string searchString = "") // default 1-10 size
@@ -68,7 +72,7 @@ namespace FlightSystem.Controllers
             }
         }
 
-
+        [Authorize(Roles = "Admin,Pilot")]
         [HttpPost]
         public async Task<IActionResult> AddFlightAsync([FromBody] FlightModel flightmodel)
         {
@@ -77,6 +81,8 @@ namespace FlightSystem.Controllers
             var newFl = await _uow.FlightService.AddFlightAsync(flightmodel, userId);
             return Ok(newFl);
         }
+
+        [Authorize(Roles = "Admin,Pilot")]
 
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateFlightAsync(int id, [FromBody] FlightModel flightmodel)
@@ -88,6 +94,9 @@ namespace FlightSystem.Controllers
             await _uow.FlightService.UpdateFlightAsync(id, flightmodel);
             return Ok();
         }
+
+        [Authorize(Roles = "Admin,Pilot")]
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFlightAsync([FromBody] int id)
         {
